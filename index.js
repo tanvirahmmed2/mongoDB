@@ -15,7 +15,23 @@ const productsSchema = new mongoose.Schema({
     },
     price: {
         type: Number,
-        required: true
+        required: true,
+        length: 10,
+        
+    },
+    rating:{
+        type: Number,
+        required: true,
+        Validation: [
+            Validation= function(v) {
+                return test(v)
+                
+            },
+            {
+                message: (props)=>{`${props} must be single disit `}
+            }
+        ]
+
     },
     description: {
         type: String,
