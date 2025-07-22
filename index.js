@@ -109,11 +109,15 @@ app.get("/products/:id", async (req, res) => {
 app.get("/products", async (req, res) => {
 
     try {
-        const products = await Product.find({price: {$gt :30000}})
-        if (products) {
+        const price= req.query.price
+        let products;
+        if (price) {
+            products = await Product.find({ price: {$gt: price}}).sort({price:1})
+
             res.status(200).send(products)
         } else {
-            res.status(500).send({ message: "product not found" })
+            products = await Product.find().countDocuments()
+            res.status(200).send(products)
         }
 
     } catch (error) {
@@ -125,8 +129,47 @@ app.get("/products", async (req, res) => {
 
 
 
+//delete
+app.delete("/products/:id", async (req,res)=>{
+    const id= req.params.id;
+    try {
+      const products= await Product.deleteOne({_id: id})
+      res.status(200).send({
+        successful: true,
+        message: "id deleted",
+        data: products
+      })
 
 
+    } catch (error) {
+        res.status(500).send({ message: error })
+
+        
+    }
+})
+// update
+
+app.put("/products/:id", async (req,res)=>{
+    
+    try {
+        const id= req.params.id;
+        const products= await Product.updateOne({_id: id}, {$set: {price: 5000}})
+        res.status(200).send({
+        successful: true,
+        message: "product updated",
+        data: products
+      })
+
+
+
+
+        
+    } catch (error) {
+        res.status(500).send({ message: error })
+        
+    }
+
+})
 
 
 
